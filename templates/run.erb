@@ -1,0 +1,109 @@
+#!/bin/bash
+exec 2>&1
+export CARBON_HOME=$HOME/wso2esb
+export JAVA_HOME=/usr/java/latest
+
+# Set AXIS2_HOME. Needed for One Click JAR Download
+AXIS2_HOME=$CARBON_HOME
+
+if [ -z "$JAVACMD" ] ; then
+  if [ -n "$JAVA_HOME"  ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+      # IBM's JDK on AIX uses strange locations for the executables
+      JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+      JAVACMD="$JAVA_HOME/bin/java"
+    fi
+  else
+    JAVACMD=java
+  fi
+fi
+
+if [ ! -x "$JAVACMD" ] ; then
+  echo "Error: JAVA_HOME is not defined correctly."
+  echo " CARBON cannot execute $JAVACMD"
+  exit 1
+fi
+
+# if JAVA_HOME is not set we're not happy
+if [ -z "$JAVA_HOME" ]; then
+  echo "You must set the JAVA_HOME variable before running CARBON."
+  exit 1
+fi
+
+# Uncomment for debug
+#JAVA_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=19444 $JAVA_OPTS"
+
+# Uncomment to run samples
+# SAMPLE_NUM=0
+# JAVA_OPTS="-Desb.sample=${SAMPLE_NUM} -Dcarbon.registry.root=/esb-samples/s$${SAMPLE_NUM} $JAVA_OPTS"
+
+# ---------- Handle the SSL Issue with proper JDK version --------------------
+jdk_16=`$JAVA_HOME/bin/java -version 2>&1 | grep "1.[6|7]"`
+if [ "$jdk_16" = "" ]; then
+   echo " Starting WSO2 Carbon (in unsupported JDK)"
+   echo " [ERROR] CARBON is supported only on JDK 1.6 and 1.7"
+fi
+
+CARBON_XBOOTCLASSPATH=""
+for f in "$CARBON_HOME"/lib/xboot/*.jar
+do
+    if [ "$f" != "$CARBON_HOME/lib/xboot/*.jar" ];then
+        CARBON_XBOOTCLASSPATH="$CARBON_XBOOTCLASSPATH":$f
+    fi
+done
+
+JAVA_ENDORSED_DIRS="$CARBON_HOME/lib/endorsed":"$JAVA_HOME/jre/lib/endorsed":"$JAVA_HOME/lib/endorsed"
+
+CARBON_CLASSPATH=""
+if [ -e "$JAVA_HOME/lib/tools.jar" ]; then
+    CARBON_CLASSPATH="$JAVA_HOME/lib/tools.jar"
+fi
+for f in "$CARBON_HOME"/bin/*.jar
+do
+    if [ "$f" != "$CARBON_HOME/bin/*.jar" ];then
+        CARBON_CLASSPATH="$CARBON_CLASSPATH":$f
+    fi
+done
+for t in "$CARBON_HOME"/lib/commons-lang*.jar
+do
+    CARBON_CLASSPATH="$CARBON_CLASSPATH":$t
+done
+
+# ----- Execute The Requested Command -----------------------------------------
+
+echo JAVA_HOME environment variable is set to $JAVA_HOME
+echo CARBON_HOME environment variable is set to $CARBON_HOME
+
+cd "$CARBON_HOME"
+
+START_EXIT_STATUS=121
+status=$START_EXIT_STATUS
+
+exec $JAVACMD \
+    -Xbootclasspath/a:"$CARBON_XBOOTCLASSPATH" \
+    -Xms256m -Xmx1024m -XX:MaxPermSize=256m \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath="$CARBON_HOME/repository/logs/heap-dump.hprof" \
+    $JAVA_OPTS \
+    -Dcom.sun.management.jmxremote \
+    -classpath "$CARBON_CLASSPATH" \
+    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" \
+    -Djava.io.tmpdir="$CARBON_HOME/tmp" \
+    -Dcatalina.base="$CARBON_HOME/lib/tomcat" \
+    -Dwso2.server.standalone=true \
+    -Dcarbon.registry.root=/ \
+    -Djava.command="$JAVACMD" \
+    -Dcarbon.home="$CARBON_HOME" \
+    -Djava.util.logging.config.file="$CARBON_HOME/repository/conf/log4j.properties" \
+    -Dcarbon.config.dir.path="$CARBON_HOME/repository/conf" \
+    -Dcomponents.repo="$CARBON_HOME/repository/components/plugins" \
+    -Dconf.location="$CARBON_HOME/repository/conf"\
+    -Dcom.atomikos.icatch.file="$CARBON_HOME/lib/transactions.properties" \
+    -Dcom.atomikos.icatch.hide_init_file_path=true \
+    -Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true \
+    -Dcom.sun.jndi.ldap.connect.pool.authentication=simple  \
+    -Dcom.sun.jndi.ldap.connect.pool.timeout=3000  \
+    -Dorg.terracotta.quartz.skipUpdateCheck=true \
+    -Djava.security.egd=file:/dev/./urandom \
+    org.wso2.carbon.bootstrap.Bootstrap $*
