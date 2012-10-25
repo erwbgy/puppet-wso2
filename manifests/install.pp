@@ -1,31 +1,47 @@
-class wso2esb::install {
-  $workdir = $wso2esb::workdir
-  $version = $wso2esb::version
+class wso2esb::install (
+  $version = undef,
+  $user    = undef,
+  $group   = undef,
+  $basedir = undef
+) {
+  if $version == undef {
+    fail('wso2esb::install version paramter is required')
+  }
+  if $user == undef {
+    fail('wso2esb::install user paramter is required')
+  }
+  if $group == undef {
+    fail('wso2esb::install group paramter is required')
+  }
+  if $basedir == undef {
+    fail('wso2esb::install basedir paramter is required')
+  }
   $zipfile = "wso2esb-${version}.zip"
   $subdir  = "wso2esb-${version}"
-  realize( Package['jdk', 'unzip', 'rsync', 'sed'] )
-  realize( User[$wso2esb::user] )
+  package { ['jdk', 'unzip', 'rsync', 'sed']:
+    ensure => installed,
+  }
   # defaults
   File {
-    owner => $wso2esb::user,
-    group => $wso2esb::group,
+    owner => $user,
+    group => $group,
   }
   file { 'wso2esb-zipfile':
     ensure  => present,
-    path    => "${workdir}/${zipfile}",
+    path    => "/root/wso2esb/${zipfile}",
     mode    => '0444',
     source  => "puppet:///files/${zipfile}",
-    require => File[$workdir],
+    require => File['/root/wso2esb'],
   }
   exec { 'wso2esb-unpack':
-    cwd     => $wso2esb::basedir,
-    command => "/usr/bin/unzip '${workdir}/${zipfile}'",
+    cwd     => $basedir,
+    command => "/usr/bin/unzip '/root/wso2esb/${zipfile}'",
     require => File[$wso2esb::basedir, 'wso2esb-zipfile'],
     creates => "${wso2esb::basedir}/${subdir}",
   }
-  file { "${wso2esb::basedir}/wso2esb":
+  file { "${basedir}/wso2esb":
     ensure  => link,
-    target  => "${wso2esb::basedir}/${subdir}",
+    target  => "${basedir}/${subdir}",
     require => File[$wso2esb::basedir],
   }
   # TODO: Add required config files from templates

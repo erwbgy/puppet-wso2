@@ -1,4 +1,6 @@
-class wso2esb::config {
+class wso2esb::config (
+  $group = 'wso2'
+) {
   # From http://wso2.org/project/esb/java/4.0.0/docs/admin_guide.html
   augeas { 'wso2esb-sysctl':
     context => '/files/etc/sysctl.conf',
@@ -17,18 +19,18 @@ class wso2esb::config {
   }
   include limits
   limits::conf { 'wso2esb-soft':
-    domain => "@${wso2esb::group}",
+    domain => "@${group}",
     type   => 'soft',
     item   => 'nofile',
     value  => '4096'
   }
   limits::conf { 'wso2esb-hard':
-    domain => "@${wso2esb::group}",
+    domain => "@${group}",
     type   => 'hard',
     item   => 'nofile',
     value  => '65535'
   }
-  iptables::allow{ 'http_wsdl':  port => '8280', protocol => 'tcp' }
-  iptables::allow{ 'https_wsdl': port => '8243', protocol => 'tcp' }
-  iptables::allow{ 'console':    port => '9443', protocol => 'tcp' }
+  iptables::allow{ 'wso2esb-http_wsdl':  port => '8280', protocol => 'tcp' }
+  iptables::allow{ 'wso2esb-https_wsdl': port => '8243', protocol => 'tcp' }
+  iptables::allow{ 'wso2esb-console':    port => '9443', protocol => 'tcp' }
 }
