@@ -1,8 +1,9 @@
 class wso2esb::install (
-  $version = undef,
-  $user    = undef,
-  $group   = undef,
-  $basedir = undef
+  $version   = undef,
+  $user      = undef,
+  $group     = undef,
+  $basedir   = undef,
+  $workspace = undef
 ) {
   if $version == undef {
     fail('wso2esb::install version paramter is required')
@@ -16,6 +17,9 @@ class wso2esb::install (
   if $basedir == undef {
     fail('wso2esb::install basedir paramter is required')
   }
+  if $workspace == undef {
+    fail('wso2esb::install workspace paramter is required')
+  }
   $zipfile = "wso2esb-${version}.zip"
   $subdir  = "wso2esb-${version}"
   package { ['jdk', 'unzip', 'rsync', 'sed']:
@@ -28,21 +32,26 @@ class wso2esb::install (
   }
   file { 'wso2esb-zipfile':
     ensure  => present,
-    path    => "/root/wso2esb/${zipfile}",
+    path    => "${workspace}/${zipfile}",
     mode    => '0444',
     source  => "puppet:///files/${zipfile}",
-    require => File['/root/wso2esb'],
+    require => File[$workspace],
   }
   exec { 'wso2esb-unpack':
     cwd     => $basedir,
-    command => "/usr/bin/unzip '/root/wso2esb/${zipfile}'",
-    require => File[$wso2esb::basedir, 'wso2esb-zipfile'],
-    creates => "${wso2esb::basedir}/${subdir}",
+    command => "/usr/bin/unzip '${workspace}/${zipfile}'",
+    creates => "${basedir}/${subdir}",
+    notify  => Exec['wso2esb-fix-ownership'],
+    require => [ Exec['wso2esb-basedir'], File['wso2esb-zipfile'] ],
+  }
+  exec { 'wso2esb-fix-ownership':
+    command     => "/bin/chown -R ${user}:${group} ${basedir}/${subdir}",
+    refreshonly => true,
   }
   file { "${basedir}/wso2esb":
     ensure  => link,
     target  => "${basedir}/${subdir}",
-    require => File[$wso2esb::basedir],
+    require => Exec['wso2esb-basedir'],
   }
   # TODO: Add required config files from templates
   # TODO: Add JDBC database drivers -> ${wso2esb::basedir}/esb/lib/endorsed
