@@ -1,9 +1,4 @@
-class wso2esb::config (
-  $group = undef
-) {
-  if $group == undef {
-    fail('wso2esb::config group parameter is required')
-  }
+class wso2esb::config {
   # From http://wso2.org/project/esb/java/4.0.0/docs/admin_guide.html
   augeas { 'wso2esb-sysctl':
     context => '/files/etc/sysctl.conf',
@@ -20,10 +15,9 @@ class wso2esb::config (
       'set net.ipv4.tcp_wmem 4096 65536 16777216',
     ],
   }
-  limits::set { 'wso2esb':
-    domain => "@${group}",
+  limits::set { "@${::wso2esb::group}":
     item   => 'nofile',
-    soft   => '4096'
+    soft   => '4096',
     hard   => '65535'
   }
 }
