@@ -1,0 +1,28 @@
+# WSO2 product installs
+wso2::products:
+  # Specify all the defaults explicitly
+  wso2esb-4.5.0:
+    user:    wso2
+    group:   wso2
+    basedir: /opt/wso2
+    default: false
+  # Specify all the defaults explicitly and set default to true
+  wso2esb-4.5.1:
+    user:    wso2
+    group:   wso2
+    basedir: /opt/wso2
+    default: true
+  # Use a different basedir, with defaults for the rest
+  wso2greg-4.5.2:
+    basedir: /usr/local/wso2
+  # Use the defaults for everything
+  wso2am-1.2.0: {}
+
+# Users running WSO2 products under Runit
+wso2::runtime:
+  wso2esb1:
+    product: wso2esb-4.5.1
+    product: wso2am-1.2.0
+  wso2esb2:
+    product: wso2esb-4.5.1
+    product: wso2greg-4.5.2
