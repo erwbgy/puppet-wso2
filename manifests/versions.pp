@@ -1,12 +1,12 @@
-class wso2esb::versions (
+class wso2::versions (
   $config = undef
 ) {
   if $config {
     $defaults = {
-      user    => $::wso2esb::user,
-      group   => $::wso2esb::group,
-      basedir => $::wso2esb::basedir,
+      user    => $::wso2::user,
+      group   => $::wso2::group,
+      basedir => $::wso2::basedir,
     }
-    create_resources('wso2esb::install', $config, $defaults)
+    create_resources('wso2::install', $config, $defaults)
   }
 }

@@ -1,3 +1,3 @@
 fixtures:
   symlinks:
-    wso2esb: "#{source_dir}"
+    wso2: "#{source_dir}"

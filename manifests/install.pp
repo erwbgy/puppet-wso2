@@ -1,12 +1,12 @@
-define wso2esb::install (
-  $user    = $::wso2esb::user,
-  $group   = $::wso2esb::group,
-  $basedir = $::wso2esb::basedir,
+define wso2::install (
+  $user    = $::wso2::user,
+  $group   = $::wso2::group,
+  $basedir = $::wso2::basedir,
   $default = false
 ) {
   $version = $name
-  $zipfile = "wso2esb-${version}.zip"
-  $subdir  = "wso2esb-${version}"
+  $zipfile = "wso2-${version}.zip"
+  $subdir  = "wso2-${version}"
   if ! defined(Package['unzip']) {
     package { 'unzip': ensure => installed }
   }
@@ -21,35 +21,35 @@ define wso2esb::install (
     owner => $user,
     group => $group,
   }
-  file { 'wso2esb-zipfile':
+  file { 'wso2-zipfile':
     ensure  => present,
-    path    => "/root/wso2esb/${zipfile}",
+    path    => "/root/wso2/${zipfile}",
     mode    => '0444',
     source  => "puppet:///files/${zipfile}",
-    require => File['/root/wso2esb'],
+    require => File['/root/wso2'],
   }
-  exec { 'wso2esb-unpack':
+  exec { 'wso2-unpack':
     cwd     => $basedir,
-    command => "/usr/bin/unzip '/root/wso2esb/${zipfile}'",
+    command => "/usr/bin/unzip '/root/wso2/${zipfile}'",
     creates => "${basedir}/${subdir}",
-    notify  => Exec['wso2esb-fix-ownership'],
-    require => [ Exec['wso2esb-basedir'], File['wso2esb-zipfile'] ],
+    notify  => Exec['wso2-fix-ownership'],
+    require => [ Exec['wso2-basedir'], File['wso2-zipfile'] ],
   }
   file { "${basedir}/${subdir}":
     ensure  => directory,
-    require => Exec['wso2esb-unpack']
+    require => Exec['wso2-unpack']
   }
-  exec { 'wso2esb-fix-ownership':
+  exec { 'wso2-fix-ownership':
     command     => "/bin/chown -R ${user}:${group} ${basedir}/${subdir}",
     refreshonly => true,
   }
   if $default {
-    file { "${basedir}/wso2esb":
+    file { "${basedir}/wso2":
       ensure  => link,
       target  => "${basedir}/${subdir}",
-      require => Exec['wso2esb-basedir'],
+      require => Exec['wso2-basedir'],
     }
   }
   # TODO: Add required config files from templates
-  # TODO: Add JDBC database drivers -> ${wso2esb::basedir}/esb/lib/endorsed
+  # TODO: Add JDBC database drivers -> ${wso2::basedir}/esb/lib/endorsed
 }
