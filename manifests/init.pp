@@ -13,9 +13,9 @@ class wso2 (
     creates => $basedir,
   }
   Class['wso2'] -> Class['sunjdk']
-  $versions = hiera_hash('wso2::versions', $config['versions'])
-  class { 'wso2::versions':
-    config => $versions,
+  $products = hiera_hash('wso2::products', $config['products'])
+  class { 'wso2::products':
+    config => $products,
   }
   $runtime = hiera_hash('wso2::runtime', $config['runtime'])
   class { 'wso2::runtime':

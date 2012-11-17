@@ -1,4 +1,4 @@
-class wso2::versions (
+class wso2::products (
   $config = undef
 ) {
   if $config {
