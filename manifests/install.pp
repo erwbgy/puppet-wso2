@@ -5,8 +5,8 @@ define wso2::install (
   $default = false
 ) {
   $version = $name
-  $zipfile = "wso2-${version}.zip"
-  $subdir  = "wso2-${version}"
+  $zipfile = "${version}.zip"
+  $subdir  = "${version}"
   if ! defined(Package['unzip']) {
     package { 'unzip': ensure => installed }
   }

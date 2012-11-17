@@ -40,7 +40,7 @@ define wso2::user  (
     require => File["${home}/${user}/service/wso2/log"],
   }
 
-  $subdir  = "wso2-${version}"
+  $subdir  = $version
   exec { "wso2-copy-product-${user}":
     cwd     => "${home}/${user}",
     command => "/usr/bin/rsync -a '/opt/wso2/${subdir}' ${home}/${user}",
