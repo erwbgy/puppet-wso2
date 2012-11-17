@@ -21,8 +21,8 @@ wso2::products:
 # Users running WSO2 products under Runit
 wso2::runtime:
   wso2esb1:
-    product: wso2esb-4.5.1
-    product: wso2am-1.2.0
+    wso2esb-4.5.1: {}
+    wso2am-1.2.0:  {}
   wso2esb2:
-    product: wso2esb-4.5.1
-    product: wso2greg-4.5.2
+    wso2esb-4.5.1:  {}
+    wso2greg-4.5.2: {}
