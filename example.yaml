@@ -21,8 +21,10 @@ wso2::products:
 # Users running WSO2 products under Runit
 wso2::runtime:
   wso2esb1:
-    wso2esb-4.5.1: {}
-    wso2am-1.2.0:  {}
-  wso2esb2:
-    wso2esb-4.5.1:  {}
-    wso2greg-4.5.2: {}
+    group: wso2
+    wso2esb:
+      java_home: /usr/java/jdk1.6.0_37
+      version: 4.5.1
+    wso2greg:
+      java_home: /usr/java/jdk1.6.0_37
+      version: 4.5.2
