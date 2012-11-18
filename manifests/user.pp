@@ -1,46 +1,63 @@
+  #$products  = undef,
 define wso2::user  (
-  $product = undef,
-  $group   = $::wso2::group,
-  $home    = '/home'
+  $group    = $::wso2::group,
+  $home     = '/home',
+  $wso2am   = {},
+  $wso2abm  = {},
+  $wso2esb  = {},
+  $wso2greg = {}
 ) {
   $user = $title
-  runit::service { $product:
-    user        => $user,
-    group       => $group,
+  #file { '/tmp/l':
+  #  ensure => present,
+  #  content => $products,
+  #}
+  #debug( "products: '${products}'" )
+  $defaults = {
+    user  => $user,
+    group => $group,
   }
-  ##file { "${home}/${user}/service/wso2/run":
-  ##  ensure  => present,
-  ##  mode    => '0555',
-  ##  owner   => $user,
-  ##  group   => $group,
-  ##  content => template('wso2/run.erb'),
-  ##  require => File["${home}/${user}/service/wso2"],
-  ##}
-
-  $subdir  = $product
-  exec { "wso2-copy-product-${user}":
-    cwd     => "${home}/${user}",
-    command => "/usr/bin/rsync -a '/opt/wso2/${subdir}' ${home}/${user}",
-    require => File["${::wso2::basedir}/${subdir}"],
-    creates => "${home}/${user}/${subdir}",
-    user    => $user,
-    group   => $group,
-    notify  => Exec["wso2-disable-scripts-${user}"],
+  #create_resources('wso2::user::service', $products, $defaults)
+  
+  #create_resources('wso2::user::service', {}, $defaults)
+  if $wso2am {
+    wso2::user::service{ 'wso2am':
+      user      => $user,
+      group     => $group,
+      version   => $wso2am['version'],
+      java_home => $wso2am['java_home'],
+      java_opts => $wso2am['java_opts'],
+      home      => $home,
+    }  
   }
-  exec { "wso2-disable-scripts-${user}":
-    cwd         => "${home}/${user}/${subdir}/bin",
-    command     => "/bin/sed -e '1aecho Run:' -e '1aecho \"  sv start|stop|status wso2\"' -e '1aecho instead' -e '1aexit 1' -i wso2server.sh wso2-samples.sh",
-    user        => $user,
-    group       => $group,
-    refreshonly => true,
+  if $wso2bam {
+    wso2::user::service{ 'wso2bam':
+      user      => $user,
+      group     => $group,
+      version   => $wso2bam['version'],
+      java_home => $wso2bam['java_home'],
+      java_opts => $wso2bam['java_opts'],
+      home      => $home,
+    }  
   }
-  ##file { "${home}/${user}/wso2":
-  ##  ensure  => link,
-  ##  target  => $subdir,
-  ##  owner   => $user,
-  ##  group   => $group,
-  ##  replace => false,
-  ##}
-  # TODO: Add required config files from templates
-  # TODO: Add JDBC database drivers -> $basedir/esb/lib/endorsed
+  if $wso2esb {
+    wso2::user::service{ 'wso2esb':
+      user      => $user,
+      group     => $group,
+      version   => $wso2esb['version'],
+      java_home => $wso2esb['java_home'],
+      java_opts => $wso2esb['java_opts'],
+      home      => $home,
+    }
+  }
+  if $wso2greg {
+    wso2::user::service{ 'wso2greg':
+      user      => $user,
+      group     => $group,
+      version   => $wso2greg['version'],
+      java_home => $wso2greg['java_home'],
+      java_opts => $wso2greg['java_opts'],
+      home      => $home,
+    }  
+  }
 }
