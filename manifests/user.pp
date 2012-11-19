@@ -3,7 +3,7 @@ define wso2::user  (
   $group    = $::wso2::group,
   $home     = '/home',
   $wso2am   = {},
-  $wso2abm  = {},
+  $wso2bam  = {},
   $wso2esb  = {},
   $wso2greg = {}
 ) {
