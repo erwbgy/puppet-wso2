@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Puppet-wso2 : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Puppet-wso2</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/erwbgy/puppet-wso2">View on GitHub</a>
+
+          <h1 id="project_title">Puppet-wso2</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/erwbgy/puppet-wso2/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/erwbgy/puppet-wso2/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>puppet-wso2esb</h1>
+
+<p>Puppet module to install WSO2 products and set them up to run as Runit services
+under one or more users.</p>
+
+<p>The recommended usage is to place the configuration is hiera and just:</p>
+
+<pre><code>include wso2
+</code></pre>
+
+<p>Example hiera config:</p>
+
+<pre><code># WSO2 product installs
+wso2::products:
+  # Specify all the defaults explicitly
+  wso2esb-4.5.0:
+    user:    wso2
+    group:   wso2
+    basedir: /opt/wso2
+  # Specify all the defaults explicitly, but with a different user
+  wso2esb-4.5.1:
+    user:    wso2esb
+    group:   wso2
+    basedir: /opt/wso2
+  # Use a different basedir, with defaults for the rest
+  wso2greg-4.5.2:
+    basedir: /usr/local/wso2
+  # Use the defaults for everything
+  wso2am-1.2.0: {}
+
+# Users running WSO2 products under Runit
+wso2::runtime:
+  wso2esb1:
+    group: wso2
+    wso2esb:
+      java_home: /usr/java/jdk1.6.0_37
+      version: 4.5.1
+    # Uses JAVA_HOME set to /usr/java/latest
+    wso2greg:
+      version: 4.5.2
+ wso2run2:
+   wso2am:
+      version: 1.2.0
+</code></pre>
+
+<h2>wso2::products</h2>
+
+<p>Installs WSO2 products.</p>
+
+<p><em>title</em>: The product name and version (eg. wso2esb-4.5.1)</p>
+
+<p><em>user</em>: The owner of the installed files. Default: wso2</p>
+
+<p><em>group</em>: The group of the installed files. Default: wso2</p>
+
+<p><em>basedir</em>: The base directory under which the product will be installed. Default: /opt/wso2</p>
+
+<h2>wso2::runtime</h2>
+
+<p>Sets up one or more WSO2 products to run as Runit services under the specified user accounts.</p>
+
+<p>For each user listed under wso2::runtime:</p>
+
+<p><em>title</em>: The username of the user running the products (eg. wso2esb1)</p>
+
+<p><em>group</em>: The group of installed files. Default: wso2</p>
+
+<p>For each product listed under each user:</p>
+
+<p><em>title</em>: The product name - one of: wso2am, wso2bam, wso2esb, wso2greg</p>
+
+<p><em>version</em>: The version of the product to install</p>
+
+<p><em>java_home</em>: The base directory of the JDK installation to be used. Default: /usr/java/latest</p>
+
+<p><em>java_opts</em>: The java command-line options to pass to the startup script</p>
+
+<h2>Support</h2>
+
+<p>License: Apache License, Version 2.0</p>
+
+<p>GitHub URL: <a href="https://github.com/erwbgy/puppet-wso2">https://github.com/erwbgy/puppet-wso2</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Puppet-wso2 maintained by <a href="https://github.com/erwbgy">erwbgy</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
