@@ -45,33 +45,6 @@ define wso2::user  (
     $java_opts    = $wso2esb['java_opts']
     $product_dir  = "${home}/${user}/wso2esb-${version}"
     $bind_address = $::fqdn
-    mysql::db { $db_name:
-      user     => $db_username,
-      password => $db_password,
-      host     => 'localhost',
-      grant    => ['all'],
-    }
-    file { "${product_dir}/repository/conf/datasources/master-datasources.xml.erb":
-      ensure  => present,
-      owner   => $user,
-      group   => $group,
-      mode    => '0400',
-      content => template('wso2/wso2esb/master-datasources.xml.erb'),
-      notify  => Exec["${db_name}-dbsetup"],
-    }
-    file { "${product_dir}/repository/conf/axis2/axis2.xml.erb":
-      ensure  => present,
-      owner   => $user,
-      group   => $group,
-      mode    => '0400',
-      content =>  template('wso2/wso2esb/axis2.xml.erb'),
-    }
-    exec { "${db_name}-dbsetup":
-      command     => "/usr/bin/mysql ${db_name} < $product_dir/dbscripts/mysql.sql",
-      user        => $user,
-      refreshonly => true,
-      require     => Database[$db_name],
-    }
     wso2::user::service{ 'wso2esb':
       user      => $user,
       group     => $group,
@@ -79,6 +52,49 @@ define wso2::user  (
       java_home => $java_home,
       java_opts => $java_opts,
       home      => $home,
+    }
+    mysql::db { $db_name:
+      user     => $db_username,
+      password => $db_password,
+      host     => 'localhost',
+      grant    => ['all'],
+    }
+    file { "${product_dir}/repository/conf/datasources/master-datasources.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template('wso2/wso2esb/master-datasources.xml.erb'),
+      notify  => Exec["${db_name}-dbsetup"],
+      require => File["${home}/${user}/wso2esb"],
+    }
+    file { "${product_dir}/repository/conf/axis2/axis2.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0444',
+      content => template('wso2/wso2esb/axis2.xml.erb'),
+      require => File["${home}/${user}/wso2esb"],
+    }
+    file { "${product_dir}/repository/deployment/server/synapse-configs/default/sequences/main.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0444',
+      content => template('wso2/wso2esb/main.xml.erb'),
+      require => File["${home}/${user}/wso2esb"],
+    }
+    exec { "${db_name}-dbsetup":
+      command     => "/usr/bin/mysql ${db_name} < $product_dir/dbscripts/mysql.sql",
+      user        => $user,
+      refreshonly => true,
+      require     => Database[$db_name],
+    }
+    file { "${product_dir}/repository/components/lib/WSDL_Mediator-2.0.0.jar":
+      ensure  => present,
+      mode    => '0444',
+      source  => "puppet:///files/WSDL_Mediator-2.0.0.jar",
+      require => File["${home}/${user}/wso2esb"],
     }
   }
   if $wso2greg {

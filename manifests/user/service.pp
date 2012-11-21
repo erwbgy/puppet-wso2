@@ -45,6 +45,11 @@ define wso2::user::service  (
       replace => false,
       require => File["${home}/${user}/runit/${product}/run"],
     }
+    file { "${home}/${user}/logs/${product}/repository":
+      ensure => link,
+      owner  => $user,
+      target => "${home}/${user}/${product}/repository/logs",
+    }
 
     # TODO: Add required config files from templates
     # TODO: Add JDBC database drivers -> $basedir/esb/lib/endorsed
