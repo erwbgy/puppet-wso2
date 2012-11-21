@@ -17,9 +17,10 @@ class wso2 (
   class { 'wso2::products':
     config => $products,
   }
+  include '::wso2::config'
+  include '::wso2::database'
   $runtime = hiera_hash('wso2::runtime', $config['runtime'])
   class { 'wso2::runtime':
     config => $runtime,
   }
-  include '::wso2::config'
 }
