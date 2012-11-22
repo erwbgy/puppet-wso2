@@ -96,6 +96,14 @@ define wso2::user  (
       source  => "puppet:///files/WSDL_Mediator-2.0.0.jar",
       require => File["${home}/${user}/wso2esb"],
     }
+    file { "${product_dir}/repository/conf/etc/jmx.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0444',
+      content => template('wso2/wso2esb/jmx.xml.erb'),
+      require => File["${home}/${user}/wso2esb"],
+    }
   }
   if $wso2greg {
     wso2::user::service{ 'wso2greg':
