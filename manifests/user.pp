@@ -92,8 +92,18 @@ define wso2::user  (
     }
     file { "${product_dir}/repository/components/lib/WSDL_Mediator-2.0.0.jar":
       ensure  => present,
+      owner   => $user,
+      group   => $group,
       mode    => '0444',
       source  => "puppet:///files/WSDL_Mediator-2.0.0.jar",
+      require => File["${home}/${user}/wso2esb"],
+    }
+    file { "${product_dir}/repository/components/lib/coherence-3.7.1.6.jar":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0444',
+      source  => "puppet:///files/coherence-3.7.1.6.jar",
       require => File["${home}/${user}/wso2esb"],
     }
     file { "${product_dir}/repository/conf/etc/jmx.xml":
@@ -102,6 +112,14 @@ define wso2::user  (
       group   => $group,
       mode    => '0444',
       content => template('wso2/wso2esb/jmx.xml.erb'),
+      require => File["${home}/${user}/wso2esb"],
+    }
+    file { "${product_dir}/repository/conf/carbon.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0444',
+      content => template('wso2/wso2esb/carbon.xml.erb'),
       require => File["${home}/${user}/wso2esb"],
     }
   }
