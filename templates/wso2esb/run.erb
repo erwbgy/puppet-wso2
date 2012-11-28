@@ -11,4 +11,6 @@ export JAVA_HOME=<%= @java_home %>
 export JAVA_OPTS="<%= @java_opts %>"
 
 # Prefix the final command with exec and ensure it runs in the foreground
-exec $CARBON_HOME/bin/wso2server.sh --test
+exec $CARBON_HOME/bin/wso2server.sh \
+  --test \
+  -Dcarbon.logs.path=$HOME/logs/wso2esb
