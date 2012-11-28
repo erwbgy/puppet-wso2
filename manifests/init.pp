@@ -1,26 +1,33 @@
-class wso2 (
-  $config    = {},
-  $user      = 'wso2',
-  $group     = 'wso2',
-  $basedir   = '/opt/wso2',
-) {
-  # TODO: Install patches in the correct order
-  file { '/root/wso2':
-    ensure  => directory,
-  }
-  exec { 'wso2-basedir':
-    command => "/bin/mkdir -p ${basedir}",
-    creates => $basedir,
-  }
-  Class['wso2'] -> Class['sunjdk']
-  $products = hiera_hash('wso2::products', $config['products'])
-  class { 'wso2::products':
-    config => $products,
-  }
+class wso2 {
   include '::wso2::config'
-  include '::wso2::database'
-  $runtime = hiera_hash('wso2::runtime', $config['runtime'])
-  class { 'wso2::runtime':
-    config => $runtime,
+
+  # API Manager
+  $am = hiera_hash('wso2::am', {})
+  if $am {
+    create_resources('::wso2::am', $am)
+  }
+
+  # Business Actvity Monitor
+  $bam = hiera_hash('wso2::bam', {})
+  if $bam {
+    create_resources('::wso2::bam', $bam)
+  }
+
+  # Enterprise Service Bus
+  $esb = hiera_hash('wso2::esb', {})
+  if $esb {
+    create_resources('::wso2::esb', $esb)
+  }
+
+  # Governance Registry
+  $greg = hiera_hash('wso2::greg', {})
+  if $greg {
+    create_resources('::wso2::greg', $greg)
+  }
+
+  # Identity Server
+  $is = hiera_hash('wso2::is', {})
+  if $is {
+    create_resources('::wso2::is', $is)
   }
 }

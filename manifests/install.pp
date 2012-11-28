@@ -1,8 +1,7 @@
 define wso2::install (
-  $user        = $::wso2::user,
-  $group       = $::wso2::group,
-  $basedir     = $::wso2::basedir,
-  $jdbc_driver = $::wso2::database::jdbc_driver,
+  $user,
+  $group,
+  $basedir,
 ) {
   $version = $name
   $zipfile = "${version}.zip"
@@ -42,15 +41,5 @@ define wso2::install (
   exec { "wso2-fix-ownership-${version}":
     command     => "/bin/chown -R ${user}:${group} ${basedir}/${subdir}",
     refreshonly => true,
-  }
-  # TODO: Add required config files from templates
-  # MySQL: http://mirrors.ibiblio.org/maven2/mysql/mysql-connector-java/
-  if $jdbc_driver {
-    file { "${basedir}/${subdir}/repository/components/lib/${jdbc_driver}":
-      ensure  => present,
-      mode    => '0444',
-      source  => "puppet:///files/${jdbc_driver}",
-      require => File["${basedir}/${subdir}"],
-    }
   }
 }

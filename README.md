@@ -9,69 +9,82 @@ The recommended usage is to place the configuration is hiera and just:
 
 Example hiera config:
 
-    # WSO2 product installs
-    wso2::products:
-      # Specify all the defaults explicitly
-      wso2esb-4.5.0:
-        user:    wso2
-        group:   wso2
-        basedir: /opt/wso2
-      # Specify all the defaults explicitly, but with a different user
-      wso2esb-4.5.1:
-        user:    wso2esb
-        group:   wso2
-        basedir: /opt/wso2
-      # Use a different basedir, with defaults for the rest
-      wso2greg-4.5.2:
-        basedir: /usr/local/wso2
-      # Use the defaults for everything
-      wso2am-1.2.0: {}
-    
-    # Users running WSO2 products under Runit
-    wso2::runtime:
+    # Enterprise Service Bus
+    wso2::esb:
       wso2esb1:
+        extra_jars:
+          - coherence-3.7.1.6.jar
+          - mysql-connector-java-5.1.21.jar
+          - WSDL_Mediator-2.0.0.jar
         group: wso2
-        wso2esb:
-          java_home: /usr/java/jdk1.6.0_37
-          version: 4.5.1
-        # Uses JAVA_HOME set to /usr/java/latest
-        wso2greg:
-          version: 4.5.2
-     wso2run2:
-       wso2am:
-          version: 1.2.0
+        java_home: /usr/java/jdk1.7.0_07
+        version: 4.5.1
+      wso2esb2:
+        extra_jars:
+          - mysql-connector-java-5.1.21.jar
+        java_home: /usr/java/jdk1.6.0_37
+        version: 4.5.0
+    
+    # Identity Server
+    wso2::is:
+      wso2is1:
+        extra_jars:
+          - mysql-connector-java-5.1.21.jar
+        group: wso2
+        java_home: /usr/java/jdk1.7.0_07
+        version: 4.0.0
+    
+    # Governance Registry
+    wso2::greg:
+      wso2greg1:
+        extra_jars:
+          - mysql-connector-java-5.1.21.jar
+        version: 4.5.2
+    
+    # API Manager
+    wso2::am:
+      wso2am1:
+        extra_jars:
+          - mysql-connector-java-5.1.21.jar
+        version: 1.2.0
+    
+    # Business Actvity Monitor
+    wso2::bam:
+      wso2bam1:
+        extra_jars:
+          - mysql-connector-java-5.1.21.jar
+        version: 2.0.1
 
-## wso2::products
+## Parameters
 
-Installs WSO2 products.
 
-*title*: The product name and version (eg. wso2esb-4.5.1)
+*title*: The user the product runs as
 
-*user*: The owner of the installed files. Default: wso2
+*bind_address*: The IP address listen sockets are bound to. Default: $::fqdn
 
-*group*: The group of the installed files. Default: wso2
+*db_name*: Database name. Default: "wso2-${title}",
 
-*basedir*: The base directory under which the product will be installed. Default: /opt/wso2
+*db_username*: Database username. Default: 'wso2registry',
 
-## wso2::runtime
+*db_password*: Database user password. Default: 'VRmcsa94w0VqUSVlMcBsDw',
 
-Sets up one or more WSO2 products to run as Runit services under the specified user accounts.
+*db_vendor*: The database vendor. Possible values: 'undef' or 'h2' for default H2 database; 'mysql'. Default: 'mysql',
 
-For each user listed under wso2::runtime:
+*jdbc_url*: Default: "jdbc:mysql://localhost:3306/wso2-${title}",
 
-*title*: The username of the user running the products (eg. wso2esb1)
+*jdbc_driver*: Default: 'com.mysql.jdbc.Driver',
 
-*group*: The group of installed files. Default: wso2
+*extra_jars*: Additional jar files to be placed in the repository/component/lib directory
 
-For each product listed under each user:
+*group*: The user's primary group. Default: 'wso2',
 
-*title*: The product name - one of: wso2am, wso2bam, wso2esb, wso2greg
+*home*: The parent directory of user home directories Default: '/home',
 
-*version*: The version of the product to install
+*java_home*: The base directory of the JDK installation to be used. Default: '/usr/java/latest',
 
-*java_home*: The base directory of the JDK installation to be used. Default: /usr/java/latest
+*java_opts*: Additional java command-line options to pass to the startup script
 
-*java_opts*: The java command-line options to pass to the startup script
+*version*: The version of the product to install (eg. 4.5.1)
 
 ## Support
 

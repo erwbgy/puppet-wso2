@@ -1,30 +1,47 @@
-# WSO2 product installs
-wso2::products:
-  # Specify all the defaults explicitly
-  wso2esb-4.5.0:
-    user:    wso2
-    group:   wso2
-    basedir: /opt/wso2
-    default: false
-  # Specify all the defaults explicitly and set default to true
-  wso2esb-4.5.1:
-    user:    wso2
-    group:   wso2
-    basedir: /opt/wso2
-    default: true
-  # Use a different basedir, with defaults for the rest
-  wso2greg-4.5.2:
-    basedir: /usr/local/wso2
-  # Use the defaults for everything
-  wso2am-1.2.0: {}
-
 # Users running WSO2 products under Runit
-wso2::runtime:
+
+# Enterprise Service Bus
+wso2::esb:
   wso2esb1:
+    extra_jars:
+      - coherence-3.7.1.6.jar
+      - mysql-connector-java-5.1.21.jar
+      - WSDL_Mediator-2.0.0.jar
     group: wso2
-    wso2esb:
-      java_home: /usr/java/jdk1.6.0_37
-      version: 4.5.1
-    wso2greg:
-      java_home: /usr/java/jdk1.6.0_37
-      version: 4.5.2
+    java_home: /usr/java/jdk1.7.0_07
+    version: 4.5.1
+  wso2esb2:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    java_home: /usr/java/jdk1.6.0_37
+    version: 4.5.0
+
+# Identity Server
+wso2::is:
+  wso2is1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    group: wso2
+    java_home: /usr/java/jdk1.7.0_07
+    version: 4.0.0
+
+# Governance Registry
+wso2::greg:
+  wso2greg1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 4.5.2
+
+# API Manager
+wso2::am:
+  wso2am1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 1.2.0
+
+# Business Actvity Monitor
+wso2::bam:
+  wso2bam1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 2.0.1
