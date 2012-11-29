@@ -31,7 +31,8 @@ define wso2::esb (
     basedir     => $home,
   }
 
-  wso2::extra_jars { $extra_jars:
+  $file_paths = prefix($extra_jars, "${product_dir}/")
+  wso2::extra_jars { $file_paths:
     product_dir => $product_dir,
     user        => $user,
     require     => File[$product_dir],
