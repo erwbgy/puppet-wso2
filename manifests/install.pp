@@ -1,9 +1,9 @@
 define wso2::install (
+  $version,
   $user,
   $group,
   $basedir,
 ) {
-  $version = $name
   $zipfile = "${version}.zip"
   $subdir  = $version
   if ! defined(Package['unzip']) {
@@ -32,7 +32,7 @@ define wso2::install (
     command => "/usr/bin/unzip '/root/wso2/${zipfile}'",
     creates => "${basedir}/${subdir}",
     notify  => Exec["wso2-fix-ownership-${version}"],
-    require => [ Exec['wso2-basedir'], File["wso2-zipfile-${version}"] ],
+    require => File["wso2-zipfile-${version}"],
   }
   file { "${basedir}/${subdir}":
     ensure  => directory,
