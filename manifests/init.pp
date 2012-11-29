@@ -1,6 +1,13 @@
 class wso2 {
   include '::wso2::config'
 
+  file { '/root/wso2':
+    ensure => directory,
+    owner  => 'root',
+    group  => 'wso2',
+    mode   => '0750',
+  }
+
   # API Manager
   $am = hiera_hash('wso2::am', undef)
   if $am {
