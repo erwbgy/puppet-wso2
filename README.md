@@ -1,4 +1,4 @@
-# puppet-wso2esb
+# puppet-wso2
 
 Puppet module to install WSO2 products and set them up to run as Runit services
 under one or more users.
