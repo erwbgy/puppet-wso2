@@ -15,7 +15,7 @@ class wso2::config {
       'set net.ipv4.tcp_wmem 4096 65536 16777216',
     ],
   }
-  limits::set { "@${::wso2::group}":
+  limits::set { '@wso2':
     item   => 'nofile',
     soft   => '4096',
     hard   => '65535'
