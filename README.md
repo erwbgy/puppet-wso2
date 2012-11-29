@@ -48,7 +48,7 @@ Example hiera config:
           - mysql-connector-java-5.1.21.jar
         version: 1.2.0
     
-    # Business Actvity Monitor
+    # Business Activity Monitor
     wso2::bam:
       wso2bam1:
         extra_jars:
@@ -57,6 +57,7 @@ Example hiera config:
 
 ## Parameters
 
+All product classes take following parameters:
 
 *title*: The user the product runs as
 
@@ -66,7 +67,7 @@ Example hiera config:
 
 *db_username*: Database username. Default: 'wso2registry',
 
-*db_password*: Database user password. Default: 'VRmcsa94w0VqUSVlMcBsDw',
+*db_password*: Database user password. Default: 'VR...Dw',
 
 *db_vendor*: The database vendor. Possible values: 'undef' or 'h2' for default H2 database; 'mysql'. Default: 'mysql',
 
@@ -84,7 +85,16 @@ Example hiera config:
 
 *java_opts*: Additional java command-line options to pass to the startup script
 
-*version*: The version of the product to install (eg. 4.5.1)
+*version*: The version of the product to install (eg. 4.5.1). **Required**.
+
+## Product zip files
+
+Place the product zip files (eg. wso2esb-4.5.1.zip) under the 'files' file store.  For example if /etc/puppet/fileserver.conf has:
+
+    [files]
+    path /var/lib/puppet/files
+
+the put the zip files in /var/lib/puppet/files.
 
 ## Support
 
