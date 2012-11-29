@@ -39,7 +39,7 @@ wso2::am:
       - mysql-connector-java-5.1.21.jar
     version: 1.2.0
 
-# Business Actvity Monitor
+# Business Activity Monitor
 wso2::bam:
   wso2bam1:
     extra_jars:
