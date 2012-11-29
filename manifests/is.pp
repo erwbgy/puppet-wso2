@@ -4,7 +4,7 @@ define wso2::is (
   $db_username  = "wso2is-${title}",
   $db_password  = 'VRmcsa94w0VqUSVlMcBsDw',
   $db_vendor    = 'mysql',
-  $jdbc_url     = "jdbc:mysql://localhost:3306/wso2-${title}",
+  $jdbc_url     = "jdbc:mysql://localhost:3306/wso2is-${title}",
   $jdbc_driver  = 'com.mysql.jdbc.Driver',
   $extra_jars   = [],
   $group        = 'wso2',

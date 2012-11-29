@@ -9,7 +9,7 @@ define wso2::esb (
   $db_username  = "wso2esb-${title}",
   $db_password  = 'VRmcsa94w0VqUSVlMcBsDw',
   $db_vendor    = 'mysql',
-  $jdbc_url     = "jdbc:mysql://localhost:3306/wso2-${title}",
+  $jdbc_url     = "jdbc:mysql://localhost:3306/wso2esb-${title}",
   $jdbc_driver  = 'com.mysql.jdbc.Driver',
   $extra_jars   = [],
   $group        = 'wso2',
