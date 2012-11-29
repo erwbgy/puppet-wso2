@@ -1,0 +1,16 @@
+#!/bin/bash
+# Redirect stderr so everything ends up in the log file
+exec 2>&1
+
+# Announce ourselves
+echo "<%= @product %> start"
+
+# Set environment variables
+export CARBON_HOME=$HOME/<%= @product %>-<%= @version %>
+export JAVA_HOME=<%= @java_home %>
+export JAVA_OPTS="<%= @java_opts %>"
+
+# Prefix the final command with exec and ensure it runs in the foreground
+exec $CARBON_HOME/bin/wso2server.sh \
+  --test \
+  -Dcarbon.logs.path=$HOME/logs/<%= @product %>
