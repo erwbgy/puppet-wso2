@@ -43,70 +43,94 @@ under one or more users.</p>
 
 <p>Example hiera config:</p>
 
-<pre><code># WSO2 product installs
-wso2::products:
-  # Specify all the defaults explicitly
-  wso2esb-4.5.0:
-    user:    wso2
-    group:   wso2
-    basedir: /opt/wso2
-  # Specify all the defaults explicitly, but with a different user
-  wso2esb-4.5.1:
-    user:    wso2esb
-    group:   wso2
-    basedir: /opt/wso2
-  # Use a different basedir, with defaults for the rest
-  wso2greg-4.5.2:
-    basedir: /usr/local/wso2
-  # Use the defaults for everything
-  wso2am-1.2.0: {}
-
-# Users running WSO2 products under Runit
-wso2::runtime:
+<pre><code># Enterprise Service Bus
+wso2::esb:
   wso2esb1:
+    extra_jars:
+      - coherence-3.7.1.6.jar
+      - mysql-connector-java-5.1.21.jar
+      - WSDL_Mediator-2.0.0.jar
     group: wso2
-    wso2esb:
-      java_home: /usr/java/jdk1.6.0_37
-      version: 4.5.1
-    # Uses JAVA_HOME set to /usr/java/latest
-    wso2greg:
-      version: 4.5.2
- wso2run2:
-   wso2am:
-      version: 1.2.0
+    java_home: /usr/java/jdk1.7.0_07
+    version: 4.5.1
+  wso2esb2:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    java_home: /usr/java/jdk1.6.0_37
+    version: 4.5.0
+
+# Identity Server
+wso2::is:
+  wso2is1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    group: wso2
+    java_home: /usr/java/jdk1.7.0_07
+    version: 4.0.0
+
+# Governance Registry
+wso2::greg:
+  wso2greg1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 4.5.2
+
+# API Manager
+wso2::am:
+  wso2am1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 1.2.0
+
+# Business Activity Monitor
+wso2::bam:
+  wso2bam1:
+    extra_jars:
+      - mysql-connector-java-5.1.21.jar
+    version: 2.0.1
 </code></pre>
 
-<h2>wso2::products</h2>
+<h2>Parameters</h2>
 
-<p>Installs WSO2 products.</p>
+<p>All product classes take following parameters:</p>
 
-<p><em>title</em>: The product name and version (eg. wso2esb-4.5.1)</p>
+<p><em>title</em>: The user the product runs as</p>
 
-<p><em>user</em>: The owner of the installed files. Default: wso2</p>
+<p><em>bind_address</em>: The IP address listen sockets are bound to. Default: $::fqdn</p>
 
-<p><em>group</em>: The group of the installed files. Default: wso2</p>
+<p><em>db_name</em>: Database name. Default: "wso2-${title}",</p>
 
-<p><em>basedir</em>: The base directory under which the product will be installed. Default: /opt/wso2</p>
+<p><em>db_username</em>: Database username. Default: 'wso2registry',</p>
 
-<h2>wso2::runtime</h2>
+<p><em>db_password</em>: Database user password. Default: 'VR...Dw',</p>
 
-<p>Sets up one or more WSO2 products to run as Runit services under the specified user accounts.</p>
+<p><em>db_vendor</em>: The database vendor. Possible values: 'undef' or 'h2' for default H2 database; 'mysql'. Default: 'mysql',</p>
 
-<p>For each user listed under wso2::runtime:</p>
+<p><em>jdbc_url</em>: Default: "jdbc:mysql://localhost:3306/wso2-${title}",</p>
 
-<p><em>title</em>: The username of the user running the products (eg. wso2esb1)</p>
+<p><em>jdbc_driver</em>: Default: 'com.mysql.jdbc.Driver',</p>
 
-<p><em>group</em>: The group of installed files. Default: wso2</p>
+<p><em>extra_jars</em>: Additional jar files to be placed in the repository/component/lib directory</p>
 
-<p>For each product listed under each user:</p>
+<p><em>group</em>: The user's primary group. Default: 'wso2',</p>
 
-<p><em>title</em>: The product name - one of: wso2am, wso2bam, wso2esb, wso2greg</p>
+<p><em>home</em>: The parent directory of user home directories Default: '/home',</p>
 
-<p><em>version</em>: The version of the product to install</p>
+<p><em>java_home</em>: The base directory of the JDK installation to be used. Default: '/usr/java/latest',</p>
 
-<p><em>java_home</em>: The base directory of the JDK installation to be used. Default: /usr/java/latest</p>
+<p><em>java_opts</em>: Additional java command-line options to pass to the startup script</p>
 
-<p><em>java_opts</em>: The java command-line options to pass to the startup script</p>
+<p><em>version</em>: The version of the product to install (eg. 4.5.1). <strong>Required</strong>.</p>
+
+<h2>Product zip files</h2>
+
+<p>Place the product zip files (eg. wso2esb-4.5.1.zip) under the 'files' file store.  For example if /etc/puppet/fileserver.conf has:</p>
+
+<pre><code>[files]
+path /var/lib/puppet/files
+</code></pre>
+
+<p>the put the zip files in /var/lib/puppet/files.</p>
 
 <h2>Support</h2>
 
