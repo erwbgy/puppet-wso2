@@ -28,10 +28,15 @@ define wso2::user::service  (
     replace => false,
     require => File["${home}/${user}/runit/${product}/run"],
   }
+  file { "${home}/${user}/logs/${product}":
+    ensure  => directory,
+    owner   => $user,
+    group   => $group,
+  }
   file { "${home}/${user}/logs/${product}/repository":
-    ensure => link,
-    owner  => $user,
-    target => "${home}/${user}/${product}-${version}/repository/logs",
-    force  => true,
+    ensure  => link,
+    owner   => $user,
+    target  => "${home}/${user}/${product}-${version}/repository/logs",
+    require => File["${home}/${user}/logs/${product}"],
   }
 }
