@@ -33,6 +33,7 @@ define wso2::is (
   $file_paths = prefix($extra_jars, "${product_dir}/")
   wso2::extra_jars { $file_paths:
     product_dir => $product_dir,
+    destination => "${product_dir}/lib",
     user        => $user,
     require     => File[$product_dir],
   }
