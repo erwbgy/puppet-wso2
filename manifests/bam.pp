@@ -1,4 +1,4 @@
-class wso2::bam (
+define wso2::bam (
   $bind_address = $::fqdn,
   $db_name      = "wso2-${title}",
   $db_username  = 'wso2registry',

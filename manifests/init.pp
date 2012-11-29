@@ -2,32 +2,32 @@ class wso2 {
   include '::wso2::config'
 
   # API Manager
-  $am = hiera_hash('wso2::am', {})
+  $am = hiera_hash('wso2::am', undef)
   if $am {
-    create_resources('::wso2::am', $am)
+    create_resources('wso2::am', $am)
   }
 
   # Business Actvity Monitor
-  $bam = hiera_hash('wso2::bam', {})
+  $bam = hiera_hash('wso2::bam', undef)
   if $bam {
-    create_resources('::wso2::bam', $bam)
+    create_resources('wso2::bam', $bam)
   }
 
   # Enterprise Service Bus
-  $esb = hiera_hash('wso2::esb', {})
+  $esb = hiera_hash('wso2::esb', undef)
   if $esb {
-    create_resources('::wso2::esb', $esb)
+    create_resources('wso2::esb', $esb)
   }
 
   # Governance Registry
-  $greg = hiera_hash('wso2::greg', {})
+  $greg = hiera_hash('wso2::greg', undef)
   if $greg {
-    create_resources('::wso2::greg', $greg)
+    create_resources('wso2::greg', $greg)
   }
 
   # Identity Server
-  $is = hiera_hash('wso2::is', {})
+  $is = hiera_hash('wso2::is', undef)
   if $is {
-    create_resources('::wso2::is', $is)
+    create_resources('wso2::is', $is)
   }
 }

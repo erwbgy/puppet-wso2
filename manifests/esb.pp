@@ -3,7 +3,7 @@
 #    java_home: /usr/java/jdk1.7.0_07
 #    version: 4.5.1
 
-class wso2::esb (
+define wso2::esb (
   $bind_address = $::fqdn,
   $db_name      = "wso2-${title}",
   $db_username  = 'wso2registry',

@@ -1,4 +1,4 @@
-class wso2::greg (
+define wso2::greg (
   $bind_address = $::fqdn,
   $db_name      = "wso2-${title}",
   $db_username  = 'wso2registry',
