@@ -12,6 +12,7 @@ define wso2::is (
   $java_home    = '/usr/java/latest',
   $java_opts    = '',
   $version      = undef,
+  $slave        = false,
 ) {
   $user        = $title
   $product     = 'wso2is'
@@ -67,15 +68,8 @@ define wso2::is (
           grant    => ['all'],
         }
       }
-      file { "${product_dir}/repository/conf/datasources/master-datasources.xml":
-        ensure  => present,
-        owner   => $user,
-        group   => $group,
-        mode    => '0400',
-        content => template("wso2/${product}/master-datasources.xml.erb"),
-        notify  => Exec["${db_name}-dbsetup"],
-        require => File[$product_dir],
-      }
+
+
       exec { "${db_name}-dbsetup":
         command     => "/usr/bin/mysql ${db_name} < $product_dir/dbscripts/mysql.sql",
         user        => $user,
@@ -86,5 +80,78 @@ define wso2::is (
     default: {
       fail('currently only mysql is supported - please raise a bug on github')
     }
+  }
+
+  # Version 4.x
+  if versioncmp($version, '4.0.0') > 0 {
+    file { "${product_dir}/repository/conf/datasources/master-datasources.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template("wso2/${product}/4/master-datasources.xml.erb"),
+      notify  => Exec["${db_name}-dbsetup"],
+      require => File[$product_dir],
+    }
+    if $version == '4.0.0' {
+      # Workaround for http://bugs.mysql.com/bug.php?id=4541
+      # Should be fixed in 4.0.1 - https://wso2.org/jira/browse/IDENTITY-574
+      file { "${product_dir}/dbscripts/identity/mysql.sql":
+        ensure  => present,
+        owner   => $user,
+        group   => $group,
+        mode    => '0400',
+        content => template("wso2/${product}/4/identity-mysql.sql.erb"),
+        notify  => Exec["${db_name}-dbsetup"],
+        require => File[$product_dir],
+      }
+    }
+  }
+  # Version 3.2.x
+  elsif versioncmp($version, '3.2.3') >= 0 {
+    $embedded_ldap = true
+    $external_ldap = false
+    # carbon.xml
+    file { "${product_dir}/repository/conf/carbon.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template("wso2/${product}/3/carbon.xml.erb"),
+      require => File[$product_dir],
+    }
+    # registry.xml
+    file { "${product_dir}/repository/conf/registry.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template("wso2/${product}/3/registry.xml.erb"),
+      notify  => Exec["${db_name}-dbsetup"],
+      require => File[$product_dir],
+    }
+    # cache.xml
+    file { "${product_dir}/repository/conf/cache.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template("wso2/${product}/3/cache.xml.erb"),
+      notify  => Exec["${db_name}-dbsetup"],
+      require => File[$product_dir],
+    }
+    # user-mgt.xml
+    file { "${product_dir}/repository/conf/user-mgt.xml":
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0400',
+      content => template("wso2/${product}/3/user-mgt.xml.erb"),
+      notify  => Exec["${db_name}-dbsetup"],
+      require => File[$product_dir],
+    }
+  }
+  else {
+    fail("version ${version} unsupported: currently only versions 3.2.3 and 4.0.x are supported")
   }
 }

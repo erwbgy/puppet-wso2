@@ -5,7 +5,7 @@ define wso2::extra_jars (
   $home  = '/home',
 ) {
   $jar_file = regsubst($title, "^${product_dir}/", '')
-  file { "${product_dir}/repository/components/lib/${jar_file}":
+  file { "${product_dir}/lib/${jar_file}":
     ensure  => present,
     owner   => $user,
     group   => $group,
