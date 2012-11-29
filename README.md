@@ -96,6 +96,16 @@ Place the product zip files (eg. wso2esb-4.5.1.zip) under the 'files' file store
 
 the put the zip files in /var/lib/puppet/files.
 
+## Notes
+
+Currently:
+
+* Only the ESB and Identity Server have been tested
+
+* Some of the changes are specific to my setup and may not be application to yours
+
+* Only MySQL database support is present but I plan to add Postgres and Oracle support
+
 ## Support
 
 License: Apache License, Version 2.0
