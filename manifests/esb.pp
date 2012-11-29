@@ -5,8 +5,8 @@
 
 define wso2::esb (
   $bind_address = $::fqdn,
-  $db_name      = "wso2-${title}",
-  $db_username  = 'wso2registry',
+  $db_name      = "wso2esb-${title}",
+  $db_username  = "wso2esb-${title}",
   $db_password  = 'VRmcsa94w0VqUSVlMcBsDw',
   $db_vendor    = 'mysql',
   $jdbc_url     = "jdbc:mysql://localhost:3306/wso2-${title}",
@@ -19,16 +19,18 @@ define wso2::esb (
   $version      = undef,
 ) {
   $user        = $title
-  $product_dir = "${home}/${user}/wso2esb-${version}"
+  $product     = 'wso2esb'
+  $product_dir = "${home}/${user}/${product}-${version}"
 
   if ! defined(File["/etc/runit/${user}"]) {
     runit::user { $user: group => $group }
   }
 
-  wso2::install { "wso2esb-${version}":
+  wso2::install { "${user}-${product}":
+    version     => "${product}-${version}",
     user        => $user,
     group       => $group,
-    basedir     => $home,
+    basedir     => "${home}/${user}",
   }
 
   $file_paths = prefix($extra_jars, "${product_dir}/")
@@ -38,7 +40,8 @@ define wso2::esb (
     require     => File[$product_dir],
   }
 
-  wso2::user::service{ 'wso2esb':
+  wso2::user::service{ "${user}-${product}":
+    product   => $product,
     user      => $user,
     group     => $group,
     version   => $version,
@@ -73,7 +76,7 @@ define wso2::esb (
         owner   => $user,
         group   => $group,
         mode    => '0400',
-        content => template('wso2/wso2esb/master-datasources.xml.erb'),
+        content => template("wso2/${product}/master-datasources.xml.erb"),
         notify  => Exec["${db_name}-dbsetup"],
         require => File[$product_dir],
       }
@@ -95,31 +98,31 @@ define wso2::esb (
     owner   => $user,
     group   => $group,
     mode    => '0444',
-    content => template('wso2/wso2esb/axis2.xml.erb'),
-    require => File["${home}/${user}/wso2esb"],
+    content => template("wso2/${product}/axis2.xml.erb"),
+    require => File[$product_dir],
   }
   file { "${product_dir}/repository/deployment/server/synapse-configs/default/sequences/main.xml":
     ensure  => present,
     owner   => $user,
     group   => $group,
     mode    => '0444',
-    content => template('wso2/wso2esb/main.xml.erb'),
-    require => File["${home}/${user}/wso2esb"],
+    content => template("wso2/${product}/main.xml.erb"),
+    require => File[$product_dir],
   }
   file { "${product_dir}/repository/conf/etc/jmx.xml":
     ensure  => present,
     owner   => $user,
     group   => $group,
     mode    => '0444',
-    content => template('wso2/wso2esb/jmx.xml.erb'),
-    require => File["${home}/${user}/wso2esb"],
+    content => template("wso2/${product}/jmx.xml.erb"),
+    require => File[$product_dir],
   }
   file { "${product_dir}/repository/conf/carbon.xml":
     ensure  => present,
     owner   => $user,
     group   => $group,
     mode    => '0444',
-    content => template('wso2/wso2esb/carbon.xml.erb'),
-    require => File["${home}/${user}/wso2esb"],
+    content => template("wso2/${product}/carbon.xml.erb"),
+    require => File[$product_dir],
   }
 }

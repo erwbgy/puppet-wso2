@@ -1,7 +1,7 @@
 define wso2::is (
   $bind_address = $::fqdn,
-  $db_name      = "wso2-${title}",
-  $db_username  = 'wso2registry',
+  $db_name      = "wso2is-${title}",
+  $db_username  = "wso2is-${title}",
   $db_password  = 'VRmcsa94w0VqUSVlMcBsDw',
   $db_vendor    = 'mysql',
   $jdbc_url     = "jdbc:mysql://localhost:3306/wso2-${title}",
@@ -14,14 +14,16 @@ define wso2::is (
   $version      = undef,
 ) {
   $user        = $title
-  $product_dir = "${home}/${user}/wso2is-${version}"
+  $product     = 'wso2is'
+  $product_dir = "${home}/${user}/${product}-${version}"
 
   if ! defined(File["/etc/runit/${user}"]) {
     include runit
     runit::user { $user: group => $group }
   }
 
-  wso2::install { "wso2is-${version}":
+  wso2::install { "${user}-${product}":
+    version     => "${product}-${version}",
     user        => $user,
     group       => $group,
     basedir     => "${home}/${user}",
@@ -34,7 +36,8 @@ define wso2::is (
     require     => File[$product_dir],
   }
 
-  wso2::user::service{ 'wso2is':
+  wso2::user::service{ "${user}-${product}":
+    product   => $product,
     user      => $user,
     group     => $group,
     version   => $version,
@@ -69,7 +72,7 @@ define wso2::is (
         owner   => $user,
         group   => $group,
         mode    => '0400',
-        content => template('wso2/wso2is/master-datasources.xml.erb'),
+        content => template("wso2/${product}/master-datasources.xml.erb"),
         notify  => Exec["${db_name}-dbsetup"],
         require => File[$product_dir],
       }
