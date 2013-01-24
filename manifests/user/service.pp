@@ -1,42 +1,43 @@
 define wso2::user::service  (
-  $product   = undef,
-  $user      = undef,
+  $basedir,
+  $logdir,
+  $product,
+  $user,
   $group     = undef,
   $version   = undef,
   $java_home = '/usr/java/latest',
   $java_opts = '',
-  $home      = '/home'
 ) {
-  runit::service { "${user}-${product}":
+  $installdir = "${basedir}/logscape-${version}"
+  runit::service { "${product}-${user}":
     service     => $product,
+    basedir     => $basedir,
+    logdir      => $logdir,
     user        => $user,
     group       => $group,
+    down        => true,
+    timestamp   => false,
   }
-  file { "${home}/${user}/runit/${product}/run":
+  file { "${basedir}/runit/${product}/run":
     ensure  => present,
     mode    => '0555',
     owner   => $user,
     group   => $group,
     content => template("wso2/${product}/run.erb"),
-    require => File["${home}/${user}/runit/${product}"],
+    require => File["${basedir}/runit/${product}"],
   }
-  file { "${home}/${user}/service/${product}":
+  file { "${basedir}/service/${product}":
     ensure  => link,
-    target  => "${home}/${user}/runit/${product}",
+    target  => "${basedir}/runit/${product}",
     owner   => $user,
     group   => $group,
     replace => false,
-    require => File["${home}/${user}/runit/${product}/run"],
+    require => File["${basedir}/runit/${product}/run"],
   }
-  file { "${home}/${user}/logs/${product}":
-    ensure  => directory,
-    owner   => $user,
-    group   => $group,
-  }
-  file { "${home}/${user}/logs/${product}/repository":
+  file { "${logdir}/repository":
     ensure  => link,
     owner   => $user,
-    target  => "${home}/${user}/${product}-${version}/repository/logs",
-    require => File["${home}/${user}/logs/${product}"],
+    target  => "${basedir}/product/${product}-${version}/repository/logs",
+    require => File[$logdir],
   }
 }

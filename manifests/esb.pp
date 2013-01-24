@@ -4,6 +4,8 @@
 #    version: 4.5.1
 
 define wso2::esb (
+  $version,
+  $basedir      = '/opt/wso2esb',
   $bind_address = $::fqdn,
   $db_name      = "wso2esb-${title}",
   $db_username  = "wso2esb-${title}",
@@ -11,26 +13,35 @@ define wso2::esb (
   $db_vendor    = 'mysql',
   $jdbc_url     = "jdbc:mysql://localhost:3306/wso2esb-${title}",
   $jdbc_driver  = 'com.mysql.jdbc.Driver',
+  $logdir       = '/var/log/wso2esb',
   $extra_jars   = [],
   $group        = 'wso2',
-  $home         = '/home',
   $java_home    = '/usr/java/latest',
   $java_opts    = '',
-  $version      = undef,
 ) {
   $user        = $title
   $product     = 'wso2esb'
-  $product_dir = "${home}/${user}/${product}-${version}"
+  $product_dir = "${basedir}/product/${product}-${version}"
 
-  if ! defined(File["/etc/runit/${user}"]) {
-    runit::user { $user: group => $group }
-  }
+  include runit
+  #if ! defined(File["/etc/runit/${user}"]) {
+    runit::user { $user:
+      basedir => $basedir,
+      group   => $group,
+    }
+  #}
 
   wso2::install { "${user}-${product}":
     version     => "${product}-${version}",
     user        => $user,
     group       => $group,
-    basedir     => "${home}/${user}",
+    basedir     => $basedir,
+  }
+  file { "${basedir}/product/${product}":
+    ensure => link,
+    owner  => $user,
+    group  => $group,
+    target => "${product}-${version}",
   }
 
   $file_paths = prefix($extra_jars, "${product_dir}/")
@@ -42,13 +53,14 @@ define wso2::esb (
   }
 
   wso2::user::service{ "${user}-${product}":
+    basedir   => $basedir,
+    logdir    => $logdir,
     product   => $product,
     user      => $user,
     group     => $group,
     version   => $version,
     java_home => $java_home,
     java_opts => $java_opts,
-    home      => $home,
   }
 
   # Governance registry MySQL database
