@@ -14,10 +14,10 @@
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
-                    <url><%= jdbc_url %></url>
-                    <username><%= db_username %></username>
-                    <password><%= db_password %></password>
-                    <driverClassName><%= jdbc_driver %></driverClassName>
+                    <url><%= @jdbc_url %></url>
+                    <username><%= @db_username %></username>
+                    <password><%= @db_password %></password>
+                    <driverClassName><%= @jdbc_driver %></driverClassName>
                     <maxActive>50</maxActive>
                     <maxWait>60000</maxWait>
                     <testOnBorrow>true</testOnBorrow>

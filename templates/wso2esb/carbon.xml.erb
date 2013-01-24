@@ -45,21 +45,21 @@
        This is will become part of the End Point Reference of the
        services deployed on this server instance.
     -->
-    <!--HostName>www.wso2.org</HostName-->
+    <HostName><%= @fqdn %></HostName>
 
     <!--
     Host name to be used for the Carbon management console
     -->
-    <!--MgtHostName>mgt.wso2.org</MgtHostName-->
+    <MgtHostName><%= @fqdn %></MgtHostName>
 
     <!--
         The URL of the back end server. This is where the admin services are hosted and
         will be used by the clients in the front end server.
         This is required only for the Front-end server. This is used when seperating BE server from FE server
        -->
-    <!--<ServerURL>local:/${carbon.context}/services/</ServerURL>-->
+    <ServerURL>local:/${carbon.context}/services/</ServerURL>
     
-    <ServerURL>https://${carbon.local.ip}:${carbon.management.port}${carbon.context}/services/</ServerURL>
+    <!--<ServerURL>https://${carbon.local.ip}:${carbon.management.port}${carbon.context}/services/</ServerURL>-->
     
      <!--
      The URL of the index page. This is where the user will be redirected after signing in to the

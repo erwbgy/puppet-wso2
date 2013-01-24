@@ -6,11 +6,11 @@ exec 2>&1
 echo "<%= @product %> start"
 
 # Set environment variables
-export CARBON_HOME=$HOME/<%= @product %>-<%= @version %>
+export CARBON_HOME=<%= @product_dir %>
 export JAVA_HOME=<%= @java_home %>
 export JAVA_OPTS="<%= @java_opts %>"
 
 # Prefix the final command with exec and ensure it runs in the foreground
 exec $CARBON_HOME/bin/wso2server.sh \
   --test \
-  -Dcarbon.logs.path=$HOME/logs/<%= @product %>
+  -Dcarbon.logs.path=<%= @logdir %>

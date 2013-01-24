@@ -22,7 +22,7 @@
     <StartRMIServer>true</StartRMIServer>
 
     <!-- HostName, or Network interface to which this RMI server should be bound -->
-    <HostName><%= scope.lookupvar('::fqdn') %></HostName>
+    <HostName><%= @fqdn %></HostName>
 
     <!--  ${Ports.JMX.RMIRegistryPort} is defined in the Ports section of the carbon.xml-->
     <RMIRegistryPort>${Ports.JMX.RMIRegistryPort}</RMIRegistryPort>
